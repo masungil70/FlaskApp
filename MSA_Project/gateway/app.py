@@ -1,13 +1,7 @@
-import os # 운영체제 기능(파일 경로 등)을 위한 모듈
 import time # 시간 측정을 위한 모듈
 from fastapi import FastAPI, Request, Response, HTTPException # FastAPI 프레임워크 관련 모듈
 from fastapi.middleware.cors import CORSMiddleware # CORS(교차 출처 리소스 공유) 미들웨어
-from fastapi.responses import HTMLResponse, JSONResponse # HTML 및 JSON 응답을 위한 모듈
-from fastapi.staticfiles import StaticFiles # 정적 파일 제공을 위한 모듈
 import httpx # 비동기 HTTP 요청을 위한 라이브러리 (FastAPI의 비동기 특성과 호환)
-
-# gateway/static 폴더의 절대 경로를 직접 지정
-STATIC_DIR = r'C:\project\awsTechnicalEssentails\FlaskApp\MSA_Project\gateway\static'
 
 app = FastAPI() # FastAPI 애플리케이션 인스턴스 생성
 
@@ -64,18 +58,6 @@ async def proxy_employee_photo_requests(filename: str, request: Request):
     except httpx.RequestError as e:
         # 서비스 사용 불가 시 예외 발생
         raise HTTPException(status_code=503, detail=f"Employee photo service unavailable: {str(e)}")
-
-# 정적 파일 제공
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
-
-@app.get("/", response_class=HTMLResponse)
-async def serve_index():
-    """index.html 파일을 제공합니다."""
-    index_path = os.path.join(STATIC_DIR, "index.html") # index.html 파일 경로
-    if not os.path.exists(index_path):
-        raise HTTPException(status_code=404, detail="index.html not found") # 파일을 찾을 수 없으면 404 반환
-    with open(index_path, "r") as f:
-        return HTMLResponse(content=f.read()) # index.html 내용 반환
 
 # auth_server로 요청 프록시
 @app.api_route("/api/auth/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"])

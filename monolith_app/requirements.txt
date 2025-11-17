@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pydantic
+sqlmodel
+PyJWT
+mysql-connector-python
+pillow
+python-multipart
