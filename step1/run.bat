@@ -1,0 +1,6 @@
+@echo OFF
+echo Installing dependencies...
+pip install -r requirements.txt
+
+echo Starting the monolithic application...
+uvicorn app:app --host 0.0.0.0 --port 5000 --reload
