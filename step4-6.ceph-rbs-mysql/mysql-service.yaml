@@ -1,0 +1,13 @@
+# MySQL 서버를 클러스터 내부에서 접근할 수 있게 하는 Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: ceph-storage
+spec:
+  selector:
+    # app: mysql 라벨이 붙은 포드로 연결
+    app: mysql
+  ports:
+    - port: 3306
+      targetPort: 3306

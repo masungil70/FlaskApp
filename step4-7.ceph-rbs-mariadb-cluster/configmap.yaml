@@ -1,0 +1,19 @@
+# Ceph CSI 구성을 위한 ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ceph-csi-config
+  namespace: ceph-csi
+data:
+  # 클러스터 ID와 모니터 노드 IP 리스트를 JSON 형식으로 정의
+  config.json: |
+    [
+      {
+        "clusterID": "36edd2cc-4621-11f1-9004-a7cd2b580b3e",
+        "monitors": [
+          "192.168.80.140:3300",
+          "192.168.80.141:3300",
+          "192.168.80.142:3300"
+        ]
+      }
+    ]

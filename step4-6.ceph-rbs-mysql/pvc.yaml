@@ -1,0 +1,16 @@
+# MySQL 데이터를 저장하기 위한 PersistentVolumeClaim (PVC)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+  namespace: ceph-storage
+spec:
+  accessModes:
+    # 한쪽 노드에서만 읽기/쓰기가 가능하도록 설정
+    - ReadWriteOnce
+  # 앞서 정의한 ceph-rbd StorageClass 사용
+  storageClassName: ceph-rbd
+  resources:
+    requests:
+      # 볼륨 요청 크기: 10Gi
+      storage: 10Gi

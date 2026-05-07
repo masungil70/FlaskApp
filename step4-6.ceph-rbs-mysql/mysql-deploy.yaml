@@ -1,0 +1,41 @@
+# MySQL 데이터베이스 서버 배포 (Deployment)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: ceph-storage
+spec:
+  # MySQL은 단일 인스턴스로 실행 (데이터 정합성 유지)
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  # 볼륨 마운트가 필요하므로 Recreate 전략 사용 (기존 포드 종료 후 새 포드 생성)
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          args:
+            # MySQL 8.0 이상에서 기존 인증 방식 호환을 위한 옵션
+            - "--default-authentication-plugin=mysql_native_password"
+          envFrom:
+            # mysql-secret에서 환경 변수(비밀번호 등)를 가져옴
+            - secretRef:
+                name: mysql-secret
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            # 볼륨을 MySQL 데이터 디렉토리에 마운트
+            - name: mysql-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-storage
+          persistentVolumeClaim:
+            # 정의한 PVC(mysql-pvc)를 사용하여 영구 저장소 확보
+            claimName: mysql-pvc

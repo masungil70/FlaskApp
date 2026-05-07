@@ -1,0 +1,29 @@
+# Ceph RBD를 위한 StorageClass 정의
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ceph-rbd
+# Ceph CSI RBD 프로비저너 지정
+provisioner: rbd.csi.ceph.com
+parameters:
+  # Ceph 클러스터의 고유 ID
+  clusterID: 36edd2cc-4621-11f1-9004-a7cd2b580b3e
+  # RBD 이미지가 생성될 Ceph 풀 이름
+  pool: kube_rbd
+  imageFormat: "2"
+  imageFeatures: layering
+
+  # 프로비저닝 및 노드 스테이징 단계에서 사용할 Secret 정보
+  csi.storage.k8s.io/provisioner-secret-name: ceph-secret
+  csi.storage.k8s.io/provisioner-secret-namespace: ceph-storage
+  csi.storage.k8s.io/node-stage-secret-name: ceph-secret
+  csi.storage.k8s.io/node-stage-secret-namespace: ceph-storage
+
+# PVC 삭제 시 실제 데이터(볼륨)도 삭제함
+reclaimPolicy: Delete
+# 볼륨 크기 확장을 허용함
+allowVolumeExpansion: true
+# 볼륨 바인딩 시점을 즉시(Immediate)로 설정
+volumeBindingMode: Immediate
+mountOptions:
+  - discard
